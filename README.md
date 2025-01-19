@@ -24,3 +24,42 @@ Deliverables:
 A retail management platform with APIs and analytics.
 Predictive models for demand forecasting.
 Dashboards providing actionable insights.
+
+
+.
+├── apps
+│   ├── inventory
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── __init__.py
+│   │   ├── migrations
+│   │   │   └── __init__.py
+│   │   ├── models.py
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   └── views.py
+│   └── users
+│       ├── admin.py
+│       ├── apps.py
+│       ├── __init__.py
+│       ├── migrations
+│       │   └── __init__.py
+│       ├── models.py
+│       ├── tests.py
+│       ├── urls.py
+│       └── views.py
+├── DATABASE.md
+├── manage.py
+├── README.md
+├── requirements.txt
+└── retailers
+    ├── asgi.py
+    ├── __init__.py
+    ├── __pycache__
+    │   ├── __init__.cpython-313.pyc
+    │   └── settings.cpython-313.pyc
+    ├── settings.py
+    ├── urls.py
+    └── wsgi.py
+
+8 directories, 27 files
