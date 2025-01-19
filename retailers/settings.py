@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "drf_yasg",
     'apps.inventory',
     'apps.users'
 ]
@@ -50,6 +54,27 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Access token expires in 30 minutes
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Refresh token expires in 7 days
+    'ROTATE_REFRESH_TOKENS': False,                   # Prevent rotation of refresh tokens
+    'BLACKLIST_AFTER_ROTATION': False,
+    'ALGORITHM': 'HS256',                             # Use HS256 algorithm for JWT signing
+    'SIGNING_KEY': '3e9e9214caf823685b460962128dc59f07a3f759b2b5187abf2c5f0fe6d4671c',            # Secret key for JWT signing
+    'USER_ID_FIELD': 'id',                            # User ID field
+    'USER_ID_CLAIM': 'user_id',                      # Claim for the user ID
+}
 
 ROOT_URLCONF = 'retailers.urls'
 
@@ -71,6 +96,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'retailers.wsgi.application'
 
+AUTH_USER_MODEL = 'users.User'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -123,3 +149,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
