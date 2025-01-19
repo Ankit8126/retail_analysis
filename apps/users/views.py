@@ -2,10 +2,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
-from .serializers import UserRegisterSerializer, LoginSerializer,UserUpdateSerializer, PasswordChangeSerializer
+from .serializers import UserRegisterSerializer, LoginSerializer,UserUpdateSerializer, PasswordChangeSerializer, SendOTPSerializer, ResetPasswordSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import ValidationError
+from django.core.mail import send_mail
+from .models import PasswordResetOTP
+from django.conf import settings
 
 User = get_user_model()
 
@@ -69,3 +72,33 @@ class PasswordChangeView(APIView):
             return Response({"message": "Password updated successfully."}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class SendOTPView(APIView):
+    def post(self, request):
+        serializer = SendOTPSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            user = User.objects.get(email=email)
+
+            # Create OTP instance and send email
+            otp_instance = PasswordResetOTP.objects.create(user=user)
+            send_otp_email(user.email, otp_instance.otp)
+
+            return Response({"message": "OTP sent to email."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ResetPasswordView(APIView):
+    def post(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            # Reset the password
+            user = serializer.save()
+            return Response({"message": "Password reset successful."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def send_otp_email(to_email, otp):
+    """Send OTP to user's email"""
+    subject = 'Your Password Reset OTP'
+    message = f'Use the following OTP to reset your password: {otp}'
+    send_mail(subject, message, settings.EMAIL_HOST_USER, [to_email])
